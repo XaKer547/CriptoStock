@@ -1,7 +1,8 @@
 ﻿using Binance.Net.Interfaces;
-using BitGet.Net.Interfaces;
+using Bitget.Net.Objects.Models;
 using Bybit.Net.Objects.Models.V5;
 using CriptoStock.Domain.Services;
+using CryptoStock.Domain.Models;
 using Kucoin.Net.Objects.Models.Spot.Socket;
 
 namespace CriptoStock.Desktop.Presenters
@@ -11,12 +12,12 @@ namespace CriptoStock.Desktop.Presenters
         private readonly IStockView _view;
         private readonly IStockProvider<BybitSpotTickerUpdate> _bybitProvider;
         private readonly IStockProvider<IBinanceTick> _binanceProvider;
-        private readonly IStockProvider<IBitGetTick> _bitGetProvider;
+        private readonly IStockProvider<BitgetTickerUpdate> _bitGetProvider;
         private readonly IStockProvider<KucoinStreamTick> _kucoinProvider;
         public StockPresenter(IStockView view,
             IStockProvider<BybitSpotTickerUpdate> bybitProvider,
             IStockProvider<IBinanceTick> binanceProvider,
-            IStockProvider<IBitGetTick> bitGetProvider,
+            IStockProvider<BitgetTickerUpdate> bitGetProvider,
             IStockProvider<KucoinStreamTick> kucoinProvider)
         {
             _view = view;
@@ -34,17 +35,17 @@ namespace CriptoStock.Desktop.Presenters
             _kucoinProvider.CurrencyChangedEvent += _view.UpdateKucoinCurrency;
         }
 
-        public async void ConnectToTickerChanel(string symbol)
+        public async void ConnectToTickerChanel(StockPairDTO pair)
         {
-            await _bybitProvider.ConnectToTickerChanelAsync(symbol);
+            await _bybitProvider.ConnectToTickerChanelAsync(pair);
 
-            await _binanceProvider.ConnectToTickerChanelAsync(symbol);
+            await _binanceProvider.ConnectToTickerChanelAsync(pair);
 
-            await _bitGetProvider.ConnectToTickerChanelAsync(symbol);
+            await _bitGetProvider.ConnectToTickerChanelAsync(pair);
 
-            await _kucoinProvider.ConnectToTickerChanelAsync(symbol);
+            await _kucoinProvider.ConnectToTickerChanelAsync(pair);
 
-            _view.UpdateStockSymbol(symbol);
+            _view.UpdateStockSymbol(pair.GetSymbol("-"));
         }
     }
 }

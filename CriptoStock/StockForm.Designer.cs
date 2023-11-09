@@ -80,14 +80,13 @@
             // 
             bybitStockCurrency.AutoSize = true;
             bybitStockCurrency.BackColor = Color.Transparent;
-            bybitStockCurrency.Dock = DockStyle.Right;
             bybitStockCurrency.Font = new Font("Segoe UI Semibold", 20F, FontStyle.Bold, GraphicsUnit.Point);
             bybitStockCurrency.ForeColor = SystemColors.ControlLightLight;
             bybitStockCurrency.Location = new Point(232, 43);
             bybitStockCurrency.Name = "bybitStockCurrency";
-            bybitStockCurrency.Size = new Size(91, 46);
+            bybitStockCurrency.Size = new Size(39, 46);
             bybitStockCurrency.TabIndex = 4;
-            bybitStockCurrency.Text = "asda";
+            bybitStockCurrency.Text = "0";
             // 
             // bybitStockSymbol
             // 
@@ -98,9 +97,9 @@
             bybitStockSymbol.ForeColor = SystemColors.ControlLightLight;
             bybitStockSymbol.Location = new Point(3, 43);
             bybitStockSymbol.Name = "bybitStockSymbol";
-            bybitStockSymbol.Size = new Size(91, 46);
+            bybitStockSymbol.Size = new Size(115, 46);
             bybitStockSymbol.TabIndex = 3;
-            bybitStockSymbol.Text = "asda";
+            bybitStockSymbol.Text = "Wait...";
             // 
             // bybitStockDown
             // 
@@ -147,14 +146,13 @@
             // 
             binanceStockCurrency.AutoSize = true;
             binanceStockCurrency.BackColor = Color.Transparent;
-            binanceStockCurrency.Dock = DockStyle.Right;
             binanceStockCurrency.Font = new Font("Segoe UI Semibold", 20F, FontStyle.Bold, GraphicsUnit.Point);
             binanceStockCurrency.ForeColor = SystemColors.ControlLightLight;
             binanceStockCurrency.Location = new Point(232, 43);
             binanceStockCurrency.Name = "binanceStockCurrency";
-            binanceStockCurrency.Size = new Size(91, 46);
+            binanceStockCurrency.Size = new Size(39, 46);
             binanceStockCurrency.TabIndex = 2;
-            binanceStockCurrency.Text = "asda";
+            binanceStockCurrency.Text = "0";
             // 
             // binanceStockDown
             // 
@@ -200,9 +198,9 @@
             binanceStockSymbol.ForeColor = SystemColors.ControlLightLight;
             binanceStockSymbol.Location = new Point(3, 43);
             binanceStockSymbol.Name = "binanceStockSymbol";
-            binanceStockSymbol.Size = new Size(91, 46);
+            binanceStockSymbol.Size = new Size(115, 46);
             binanceStockSymbol.TabIndex = 0;
-            binanceStockSymbol.Text = "asda";
+            binanceStockSymbol.Text = "Wait...";
             // 
             // groupBox3
             // 
@@ -225,14 +223,13 @@
             // 
             bitGetStockCurrency.AutoSize = true;
             bitGetStockCurrency.BackColor = Color.Transparent;
-            bitGetStockCurrency.Dock = DockStyle.Right;
             bitGetStockCurrency.Font = new Font("Segoe UI Semibold", 20F, FontStyle.Bold, GraphicsUnit.Point);
             bitGetStockCurrency.ForeColor = SystemColors.ControlLightLight;
             bitGetStockCurrency.Location = new Point(232, 43);
             bitGetStockCurrency.Name = "bitGetStockCurrency";
-            bitGetStockCurrency.Size = new Size(91, 46);
+            bitGetStockCurrency.Size = new Size(39, 46);
             bitGetStockCurrency.TabIndex = 2;
-            bitGetStockCurrency.Text = "asda";
+            bitGetStockCurrency.Text = "0";
             // 
             // bitGetStockDown
             // 
@@ -278,9 +275,9 @@
             bitGetStockSymbol.ForeColor = SystemColors.ControlLightLight;
             bitGetStockSymbol.Location = new Point(3, 43);
             bitGetStockSymbol.Name = "bitGetStockSymbol";
-            bitGetStockSymbol.Size = new Size(91, 46);
+            bitGetStockSymbol.Size = new Size(115, 46);
             bitGetStockSymbol.TabIndex = 0;
-            bitGetStockSymbol.Text = "asda";
+            bitGetStockSymbol.Text = "Wait...";
             // 
             // groupBox4
             // 
@@ -302,14 +299,13 @@
             // 
             kucoinStockCurrency.AutoSize = true;
             kucoinStockCurrency.BackColor = Color.Transparent;
-            kucoinStockCurrency.Dock = DockStyle.Right;
             kucoinStockCurrency.Font = new Font("Segoe UI Semibold", 20F, FontStyle.Bold, GraphicsUnit.Point);
             kucoinStockCurrency.ForeColor = SystemColors.ControlLightLight;
             kucoinStockCurrency.Location = new Point(232, 43);
             kucoinStockCurrency.Name = "kucoinStockCurrency";
-            kucoinStockCurrency.Size = new Size(91, 46);
+            kucoinStockCurrency.Size = new Size(39, 46);
             kucoinStockCurrency.TabIndex = 4;
-            kucoinStockCurrency.Text = "asda";
+            kucoinStockCurrency.Text = "0";
             // 
             // kucoinStockSymbol
             // 
@@ -320,9 +316,9 @@
             kucoinStockSymbol.ForeColor = SystemColors.ControlLightLight;
             kucoinStockSymbol.Location = new Point(3, 43);
             kucoinStockSymbol.Name = "kucoinStockSymbol";
-            kucoinStockSymbol.Size = new Size(91, 46);
+            kucoinStockSymbol.Size = new Size(115, 46);
             kucoinStockSymbol.TabIndex = 3;
-            kucoinStockSymbol.Text = "asda";
+            kucoinStockSymbol.Text = "Wait...";
             // 
             // kucoinStockDown
             // 

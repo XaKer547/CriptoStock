@@ -1,24 +1,29 @@
-﻿using Binance.Net.Clients;
-using Binance.Net.Interfaces;
+﻿using Binance.Net.Interfaces;
+using Binance.Net.Interfaces.Clients;
 using CriptoStock.Domain.Services;
 using CryptoExchange.Net.Sockets;
+using CryptoStock.Domain.Models;
 
 namespace CriptoStock.Application.Services
 {
     public class BinanceStockProvider : IStockProvider<IBinanceTick>
     {
-        private readonly BinanceSocketClient _client;
-        public BinanceStockProvider()
-        {
-            _client = new BinanceSocketClient();
-        }
-
         public event IStockProvider<IBinanceTick>.CurrencyChanged CurrencyChangedEvent;
 
-        private bool isConnected;
-        public async Task ConnectToTickerChanelAsync(string symbol)
+
+        private readonly IBinanceSocketClient _client;
+        public BinanceStockProvider(IBinanceSocketClient client)
         {
-            var result = await _client.SpotApi.ExchangeData.SubscribeToTickerUpdatesAsync(symbol, Update);
+            _client = client;
+        }
+
+
+        private bool isConnected;
+        public async Task ConnectToTickerChanelAsync(StockPairDTO pair)
+        {
+            await _client.UnsubscribeAllAsync();
+
+            var result = await _client.SpotApi.ExchangeData.SubscribeToTickerUpdatesAsync(pair.GetSymbol(), Update);
 
             isConnected = result.Success;
         }

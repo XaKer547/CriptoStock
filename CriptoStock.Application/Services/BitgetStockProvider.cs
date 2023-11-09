@@ -1,31 +1,34 @@
-﻿using BitGet.Net.Clients;
-using BitGet.Net.Interfaces;
+﻿using Bitget.Net.Interfaces.Clients;
+using Bitget.Net.Objects.Models;
 using CriptoStock.Domain.Services;
 using CryptoExchange.Net.Sockets;
+using CryptoStock.Domain.Models;
 
 namespace CriptoStock.Application.Services
 {
-    public class BitgetStockProvider : IStockProvider<IBitGetTick>
+    public class BitgetStockProvider : IStockProvider<BitgetTickerUpdate>
     {
-        private readonly BitGetSocketClient client;
-        public BitgetStockProvider()
+        public event IStockProvider<BitgetTickerUpdate>.CurrencyChanged CurrencyChangedEvent;
+
+
+        private readonly IBitgetSocketClient _client;
+        public BitgetStockProvider(IBitgetSocketClient client)
         {
-            client = new BitGetSocketClient(new BitGet.Net.Objects.BitGetSocketClientOptions());
+            _client = client;
         }
 
-        public event IStockProvider<IBitGetTick>.CurrencyChanged CurrencyChangedEvent;
 
         private bool isConnected;
-        public async Task ConnectToTickerChanelAsync(string symbol)
+        public async Task ConnectToTickerChanelAsync(StockPairDTO pair)
         {
-            await client.UnsubscribeAllAsync();
+            await _client.UnsubscribeAllAsync();
 
-            var result = await client.SpotStreams.SubscribeToTickerUpdatesAsync(symbol, Update);
+            var result = await _client.SpotApi.SubscribeToTickerUpdatesAsync(pair.GetSymbol(), Update);
 
             isConnected = result.Success;
         }
 
-        private void Update(DataEvent<IBitGetTick> @event)
+        private void Update(DataEvent<BitgetTickerUpdate> @event)
         {
             if (!isConnected)
             {

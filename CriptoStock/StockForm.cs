@@ -1,5 +1,5 @@
 ﻿using Binance.Net.Interfaces;
-using BitGet.Net.Interfaces;
+using Bitget.Net.Objects.Models;
 using Bybit.Net.Objects.Models.V5;
 using CriptoStock.Desktop.Presenters;
 using CriptoStock.Domain.Models;
@@ -13,14 +13,18 @@ namespace CriptoStock
         public StockForm(
             IStockProvider<BybitSpotTickerUpdate> bybitProvider,
             IStockProvider<IBinanceTick> binanceProvider,
-            IStockProvider<IBitGetTick> bitGetProvider,
+            IStockProvider<BitgetTickerUpdate> bitGetProvider,
             IStockProvider<KucoinStreamTick> kucoinProvider)
         {
-            InitializeComponent();
-
             var presenter = new StockPresenter(this, bybitProvider, binanceProvider, bitGetProvider, kucoinProvider);
 
-            presenter.ConnectToTickerChanel("BTCUSDT");
+            InitializeComponent();
+
+            presenter.ConnectToTickerChanel(new CryptoStock.Domain.Models.StockPairDTO()
+            {
+                BaseAsset = "BTC",
+                QuoteAsset = "USDT"
+            });
         }
 
         public async Task UpdateBinanceCurrency(StockDTO? model)
@@ -34,6 +38,8 @@ namespace CriptoStock
             var previosValue = decimal.Parse(binanceStockCurrency.Text);
 
             var newValue = model.LastPrice;
+
+            binanceStockCurrency.Text = newValue.ToString();
 
             if (previosValue > newValue)
             {
@@ -50,8 +56,6 @@ namespace CriptoStock
                 binanceStockUp.Visible = false;
                 binanceStockDown.Visible = false;
             }
-
-            binanceStockCurrency.Text = newValue.ToString();
         }
 
         public async Task UpdateBitGetCurrency(StockDTO? model)

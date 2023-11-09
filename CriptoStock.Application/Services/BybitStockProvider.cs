@@ -1,24 +1,29 @@
-﻿using Bybit.Net.Clients;
+﻿using Bybit.Net.Interfaces.Clients;
 using Bybit.Net.Objects.Models.V5;
 using CriptoStock.Domain.Services;
 using CryptoExchange.Net.Sockets;
+using CryptoStock.Domain.Models;
 
 namespace CriptoStock.Application.Services
 {
     public class BybitStockProvider : IStockProvider<BybitSpotTickerUpdate>
     {
-        private readonly BybitSocketClient _client;
-        public BybitStockProvider()
-        {
-            _client = new BybitSocketClient();
-        }
-
         public event IStockProvider<BybitSpotTickerUpdate>.CurrencyChanged CurrencyChangedEvent;
 
-        private bool isConnected;
-        public async Task ConnectToTickerChanelAsync(string symbol)
+
+        private readonly IBybitSocketClient _client;
+        public BybitStockProvider(IBybitSocketClient client)
         {
-            var result = await _client.V5SpotApi.SubscribeToTickerUpdatesAsync(symbol, Update);
+            _client = client;
+        }
+
+
+        private bool isConnected;
+        public async Task ConnectToTickerChanelAsync(StockPairDTO pair)
+        {
+            await _client.UnsubscribeAllAsync();
+
+            var result = await _client.V5SpotApi.SubscribeToTickerUpdatesAsync(pair.GetSymbol(), Update);
 
             isConnected = result.Success;
         }

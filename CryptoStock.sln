@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CriptoStock.Desktop", "CriptoStock\CriptoStock.Desktop.csproj", "{07CF9D7B-872D-4082-B41E-41E9E10793C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoStock.Desktop", "CriptoStock\CryptoStock.Desktop.csproj", "{07CF9D7B-872D-4082-B41E-41E9E10793C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CriptoStock.Domain", "CriptoStock.Domain\CriptoStock.Domain.csproj", "{D3E61C50-9CCB-4B36-81F3-C05B6061CED8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoStock.Domain", "CriptoStock.Domain\CryptoStock.Domain.csproj", "{D3E61C50-9CCB-4B36-81F3-C05B6061CED8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CriptoStock.Application", "CriptoStock.Application\CriptoStock.Application.csproj", "{BEB97D7F-DCCC-4E67-A1DC-2F3E039A4F0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoStock.Application", "CriptoStock.Application\CryptoStock.Application.csproj", "{BEB97D7F-DCCC-4E67-A1DC-2F3E039A4F0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

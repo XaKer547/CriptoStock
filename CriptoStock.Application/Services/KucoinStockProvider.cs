@@ -1,24 +1,30 @@
 ﻿using CriptoStock.Domain.Services;
 using CryptoExchange.Net.Sockets;
-using Kucoin.Net.Clients;
+using CryptoStock.Domain.Models;
+using Kucoin.Net.Interfaces.Clients;
 using Kucoin.Net.Objects.Models.Spot.Socket;
 
 namespace CriptoStock.Application.Services
 {
     public class KucoinStockProvider : IStockProvider<KucoinStreamTick>
     {
-        private readonly KucoinSocketClient _client;
-        public KucoinStockProvider()
-        {
-            _client = new KucoinSocketClient();
-        }
-
         public event IStockProvider<KucoinStreamTick>.CurrencyChanged CurrencyChangedEvent;
 
-        private bool isConnected;
-        public async Task ConnectToTickerChanelAsync(string symbol)
+
+        private readonly IKucoinSocketClient _client;
+        public KucoinStockProvider(IKucoinSocketClient client)
         {
-            var result = await _client.SpotApi.SubscribeToTickerUpdatesAsync(symbol, Update);
+            _client = client;
+        }
+
+
+        private bool isConnected;
+        public async Task ConnectToTickerChanelAsync(StockPairDTO pair)
+        {
+            await _client.UnsubscribeAllAsync();
+
+            var result = await _client.SpotApi.SubscribeToTickerUpdatesAsync(pair.GetSymbol("-"), Update);
+
             isConnected = result.Success;
         }
 

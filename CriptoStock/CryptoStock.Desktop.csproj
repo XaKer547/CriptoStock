@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CriptoStock.Application\CriptoStock.Application.csproj" />
-    <ProjectReference Include="..\CriptoStock.Domain\CriptoStock.Domain.csproj" />
+    <ProjectReference Include="..\CriptoStock.Application\CryptoStock.Application.csproj" />
+    <ProjectReference Include="..\CriptoStock.Domain\CryptoStock.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
