@@ -3,12 +3,13 @@ using Bitget.Net.Objects.Models;
 using CriptoStock.Domain.Services;
 using CryptoExchange.Net.Sockets;
 using CryptoStock.Domain.Models;
+using static CriptoStock.Domain.Services.IStockProvider;
 
 namespace CriptoStock.Application.Services
 {
-    public class BitgetStockProvider : IStockProvider<BitgetTickerUpdate>
+    public class BitgetStockProvider : IStockProvider
     {
-        public event IStockProvider<BitgetTickerUpdate>.CurrencyChanged CurrencyChangedEvent;
+        public event CurrencyChanged CurrencyChangedEvent;
 
 
         private readonly IBitgetSocketClient _client;
@@ -19,9 +20,9 @@ namespace CriptoStock.Application.Services
 
 
         private bool isConnected;
-        public async Task ConnectToTickerChanelAsync(StockPairDTO pair)
+        public async Task ConnectToTickerChanelAsync(CoinPairDTO pair)
         {
-            await _client.UnsubscribeAllAsync();
+            await _client.UnsubscribeAsync(0);
 
             var result = await _client.SpotApi.SubscribeToTickerUpdatesAsync(pair.GetSymbol(), Update);
 
@@ -30,12 +31,6 @@ namespace CriptoStock.Application.Services
 
         private void Update(DataEvent<BitgetTickerUpdate> @event)
         {
-            if (!isConnected)
-            {
-                CurrencyChangedEvent.Invoke(null);
-                return;
-            }
-
             CurrencyChangedEvent.Invoke(new Domain.Models.StockDTO()
             {
                 LastPrice = @event.Data.LastPrice,

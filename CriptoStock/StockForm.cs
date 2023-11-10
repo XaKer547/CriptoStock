@@ -1,163 +1,89 @@
-﻿using Binance.Net.Interfaces;
-using Bitget.Net.Objects.Models;
-using Bybit.Net.Objects.Models.V5;
-using CriptoStock.Desktop.Presenters;
-using CriptoStock.Domain.Models;
-using CriptoStock.Domain.Services;
-using Kucoin.Net.Objects.Models.Spot.Socket;
+﻿using CryptoStock.Desktop.Controls;
+using CryptoStock.Domain.Models;
+using CryptoStock.Domain.Services;
+using static CriptoStock.Desktop.Program;
 
 namespace CriptoStock
 {
-    public partial class StockForm : Form, IStockView
+    public partial class StockForm : Form
     {
-        public StockForm(
-            IStockProvider<BybitSpotTickerUpdate> bybitProvider,
-            IStockProvider<IBinanceTick> binanceProvider,
-            IStockProvider<BitgetTickerUpdate> bitGetProvider,
-            IStockProvider<KucoinStreamTick> kucoinProvider)
+        public StockForm(StockProviderResolver resolver, ICoinProvider coinProvider)
         {
-            var presenter = new StockPresenter(this, bybitProvider, binanceProvider, bitGetProvider, kucoinProvider);
-
             InitializeComponent();
 
-            presenter.ConnectToTickerChanel(new CryptoStock.Domain.Models.StockPairDTO()
+            FillCoinTypes(coinProvider);
+
+            ConfigureStockViews(resolver);
+        }
+
+        private void ConfigureStockViews(StockProviderResolver resolver)
+        {
+            foreach (var stockView in Controls.OfType<StockView>())
             {
-                BaseAsset = "BTC",
-                QuoteAsset = "USDT"
+                stockView.Configure(new CryptoStock.Desktop.Infrastructure.StockViewOptions()
+                {
+                    Provider = resolver(stockView.StockType)
+                });
+            }
+
+            SetTickerChanel(new CoinPairDTO() { BaseAsset = "BTC", QuoteAsset = "USDT" });
+        }
+
+        private async void FillCoinTypes(ICoinProvider coinProvider)
+        {
+            var coinTypes = await coinProvider.GetCoinTypesAsync();
+
+            var coins = coinTypes.ToArray();
+
+            baseAssetComboBox.ValueMember = nameof(CoinDTO.Name);
+            quoteAssetCombobox.ValueMember = nameof(CoinDTO.Name);
+
+            baseAssetComboBox.Items.AddRange(coins);
+            quoteAssetCombobox.Items.AddRange(coins);
+
+            baseAssetComboBox.SelectedIndex = 0;
+            quoteAssetCombobox.SelectedIndex = 1;
+        }
+
+        private void SetTickerChanel(CoinPairDTO pair)
+        {
+            foreach (var stockView in Controls.OfType<StockView>())
+            {
+                stockView.ConnectToTickerChanel(pair);
+            }
+        }
+
+        private void ChannelSetButton_Click(object sender, EventArgs e)
+        {
+            var baseAsset = (CoinDTO)baseAssetComboBox.SelectedItem;
+            var quoteAsset = (CoinDTO)quoteAssetCombobox.SelectedItem;
+
+            SetTickerChanel(new CoinPairDTO()
+            {
+                BaseAsset = baseAsset.Id,
+                QuoteAsset = quoteAsset.Id
             });
         }
 
-        public async Task UpdateBinanceCurrency(StockDTO? model)
+        private void RemoveDuplicateValues(ComboBox sender, object value)
         {
-            if (model is null)
+            foreach (var cb in coinPairBox.Controls.OfType<ComboBox>())
             {
-                binanceStockCurrency.Text = "NaN";
-                return;
-            }
-
-            var previosValue = decimal.Parse(binanceStockCurrency.Text);
-
-            var newValue = model.LastPrice;
-
-            binanceStockCurrency.Text = newValue.ToString();
-
-            if (previosValue > newValue)
-            {
-                binanceStockUp.Visible = false;
-                binanceStockDown.Visible = true;
-            }
-            else if (previosValue < newValue)
-            {
-                binanceStockUp.Visible = true;
-                binanceStockDown.Visible = false;
-            }
-            else
-            {
-                binanceStockUp.Visible = false;
-                binanceStockDown.Visible = false;
+                if (cb != sender)
+                {
+                    cb.Items.Remove(value);
+                }
             }
         }
 
-        public async Task UpdateBitGetCurrency(StockDTO? model)
+        private void BaseAssetComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (model is null)
-            {
-                bitGetStockCurrency.Text = "NaN";
-                return;
-            }
-
-            var previosValue = decimal.Parse(bitGetStockCurrency.Text);
-
-            var newValue = model.LastPrice;
-
-            if (previosValue > newValue)
-            {
-                bitGetStockUp.Visible = false;
-                bitGetStockDown.Visible = true;
-            }
-            else if (previosValue < newValue)
-            {
-                bitGetStockUp.Visible = true;
-                bitGetStockDown.Visible = false;
-            }
-            else
-            {
-                bitGetStockUp.Visible = false;
-                bitGetStockDown.Visible = false;
-            }
-
-            bitGetStockCurrency.Text = newValue.ToString();
+            RemoveDuplicateValues((ComboBox)sender, ((ComboBox)sender).SelectedItem);
         }
 
-        public async Task UpdateBybitCurrency(StockDTO? model)
+        private void QuoteAssetComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (model is null)
-            {
-                bybitStockCurrency.Text = "Nan";
-                return;
-            }
-
-            var previosValue = decimal.Parse(bybitStockCurrency.Text);
-
-            var newValue = model.LastPrice;
-
-            if (previosValue > newValue)
-            {
-                bybitStockUp.Visible = false;
-                bybitStockDown.Visible = true;
-            }
-            else if (previosValue < newValue)
-            {
-                bybitStockUp.Visible = true;
-                bybitStockDown.Visible = false;
-            }
-            else
-            {
-                bybitStockUp.Visible = false;
-                bybitStockDown.Visible = false;
-            }
-
-            bybitStockCurrency.Text = newValue.ToString();
-        }
-
-        public async Task UpdateKucoinCurrency(StockDTO? model)
-        {
-            if (model is null)
-            {
-                kucoinStockCurrency.Text = "NaN";
-                return;
-            }
-
-            var oldCurrency = decimal.Parse(kucoinStockCurrency.Text);
-
-            var newCurrency = model.LastPrice;
-
-            if (oldCurrency > newCurrency)
-            {
-                kucoinStockUp.Visible = false;
-                kucoinStockDown.Visible = true;
-            }
-            else if (oldCurrency < newCurrency)
-            {
-                kucoinStockUp.Visible = true;
-                kucoinStockDown.Visible = false;
-            }
-            else
-            {
-                kucoinStockUp.Visible = false;
-                kucoinStockDown.Visible = false;
-            }
-
-            kucoinStockCurrency.Text = newCurrency.ToString();
-        }
-
-
-        public void UpdateStockSymbol(string symbol)
-        {
-            binanceStockSymbol.Text = symbol;
-            bitGetStockSymbol.Text = symbol;
-            bybitStockSymbol.Text = symbol;
-            kucoinStockSymbol.Text = symbol;
+            RemoveDuplicateValues((ComboBox)sender, ((ComboBox)sender).SelectedItem);
         }
     }
 }

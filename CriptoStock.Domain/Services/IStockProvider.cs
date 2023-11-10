@@ -3,9 +3,9 @@ using CryptoStock.Domain.Models;
 
 namespace CriptoStock.Domain.Services
 {
-    public interface IStockProvider<T>
+    public interface IStockProvider
     {
-        Task ConnectToTickerChanelAsync(StockPairDTO pair);
+        Task ConnectToTickerChanelAsync(CoinPairDTO pair);
 
         delegate Task CurrencyChanged(StockDTO? model);
         event CurrencyChanged CurrencyChangedEvent;

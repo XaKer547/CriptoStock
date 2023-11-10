@@ -1,21 +1,18 @@
 using Binance.Net;
-using Binance.Net.Interfaces;
 using Bitget.Net;
-using Bitget.Net.Objects.Models;
 using Bybit.Net;
-using Bybit.Net.Objects.Models.V5;
 using CriptoStock.Application.Services;
 using CriptoStock.Domain.Services;
 using CryptoStock.Application.Services;
+using CryptoStock.Desktop.Models.Enums;
 using CryptoStock.Domain.Services;
 using Kucoin.Net;
-using Kucoin.Net.Objects.Models.Spot.Socket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace CriptoStock.Desktop
 {
-    internal static class Program
+    public static class Program
     {
         /// <summary>
         ///  The main entry point for the application.
@@ -30,27 +27,41 @@ namespace CriptoStock.Desktop
             var host = CreateHostBuilder().Build();
             ServiceProvider = host.Services;
 
-            var a = ServiceProvider.GetRequiredService<StockForm>();
-            System.Windows.Forms.Application.Run(a);
+            System.Windows.Forms.Application.Run(ServiceProvider.GetRequiredService<StockForm>());
         }
 
         public static IServiceProvider ServiceProvider { get; private set; }
 
+        public delegate IStockProvider StockProviderResolver(StockTypes type);
         static IHostBuilder CreateHostBuilder()
         {
             return Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    services.AddSingleton<IStockProvider<BybitSpotTickerUpdate>, BybitStockProvider>();
-                    services.AddSingleton<IStockProvider<IBinanceTick>, BinanceStockProvider>();
-                    services.AddSingleton<IStockProvider<BitgetTickerUpdate>, BitgetStockProvider>();
-                    services.AddSingleton<IStockProvider<KucoinStreamTick>, KucoinStockProvider>();
-                    services.AddSingleton<ICoinProvider, CoinProvider>();
-
                     services.AddBitget();
                     services.AddBinance();
                     services.AddKucoin();
                     services.AddBybit();
+
+
+                    services.AddSingleton<BybitStockProvider>();
+                    services.AddSingleton<BinanceStockProvider>();
+                    services.AddSingleton<BitgetStockProvider>();
+                    services.AddSingleton<KucoinStockProvider>();
+
+                    services.AddSingleton<ICoinProvider, CoinProvider>();
+
+                    services.AddTransient<StockProviderResolver>(serviceProvider => type =>
+                    {
+                        return type switch
+                        {
+                            StockTypes.Binance => serviceProvider.GetRequiredService<BinanceStockProvider>(),
+                            StockTypes.Bitget => serviceProvider.GetRequiredService<BitgetStockProvider>(),
+                            StockTypes.Bybit => serviceProvider.GetRequiredService<BybitStockProvider>(),
+                            StockTypes.Kucoin => serviceProvider.GetRequiredService<KucoinStockProvider>(),
+                            _ => throw new KeyNotFoundException()
+                        };
+                    });
 
                     services.AddTransient<StockForm>();
                 });

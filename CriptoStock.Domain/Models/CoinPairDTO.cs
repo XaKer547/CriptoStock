@@ -1,6 +1,6 @@
 ﻿namespace CryptoStock.Domain.Models
 {
-    public class StockPairDTO
+    public class CoinPairDTO
     {
         public string BaseAsset { get; set; }
         public string QuoteAsset { get; set; }

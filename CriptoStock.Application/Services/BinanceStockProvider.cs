@@ -3,12 +3,13 @@ using Binance.Net.Interfaces.Clients;
 using CriptoStock.Domain.Services;
 using CryptoExchange.Net.Sockets;
 using CryptoStock.Domain.Models;
+using static CriptoStock.Domain.Services.IStockProvider;
 
 namespace CriptoStock.Application.Services
 {
-    public class BinanceStockProvider : IStockProvider<IBinanceTick>
+    public class BinanceStockProvider : IStockProvider
     {
-        public event IStockProvider<IBinanceTick>.CurrencyChanged CurrencyChangedEvent;
+        public event CurrencyChanged CurrencyChangedEvent;
 
 
         private readonly IBinanceSocketClient _client;
@@ -19,9 +20,9 @@ namespace CriptoStock.Application.Services
 
 
         private bool isConnected;
-        public async Task ConnectToTickerChanelAsync(StockPairDTO pair)
+        public async Task ConnectToTickerChanelAsync(CoinPairDTO pair)
         {
-            await _client.UnsubscribeAllAsync();
+            await _client.UnsubscribeAsync(0);
 
             var result = await _client.SpotApi.ExchangeData.SubscribeToTickerUpdatesAsync(pair.GetSymbol(), Update);
 
@@ -30,15 +31,10 @@ namespace CriptoStock.Application.Services
 
         private void Update(DataEvent<IBinanceTick> @event)
         {
-            if (!isConnected)
-            {
-                CurrencyChangedEvent.Invoke(null);
-                return;
-            }
-
+            var price = Math.Round(@event.Data.LastPrice, 2);
             CurrencyChangedEvent.Invoke(new Domain.Models.StockDTO()
             {
-                LastPrice = @event.Data.LastPrice,
+                LastPrice = price,
             });
         }
     }
