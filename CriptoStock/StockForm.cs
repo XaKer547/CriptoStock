@@ -1,17 +1,22 @@
 ﻿using CryptoStock.Desktop.Controls;
+using CryptoStock.Desktop.Models.Enums;
 using CryptoStock.Domain.Models;
-using CryptoStock.Domain.Services;
 using static CriptoStock.Desktop.Program;
 
 namespace CriptoStock
 {
     public partial class StockForm : Form
     {
-        public StockForm(StockProviderResolver resolver, ICoinProvider coinProvider)
+        private StockTypes _type;
+        private readonly StockProviderResolver _resolver;
+        public StockForm(StockProviderResolver resolver)
         {
             InitializeComponent();
+            _resolver = resolver;
 
-            FillCoinTypes(coinProvider);
+            _type = StockTypes.Binance;
+
+            ConfigureCoinBoxes();
 
             ConfigureStockViews(resolver);
         }
@@ -29,16 +34,26 @@ namespace CriptoStock
             SetTickerChanel(new CoinPairDTO() { BaseAsset = "BTC", QuoteAsset = "USDT" });
         }
 
-        private async void FillCoinTypes(ICoinProvider coinProvider)
+        private void ConfigureCoinBoxes()
         {
-            var coinTypes = await coinProvider.GetCoinTypesAsync();
-
-            var coins = coinTypes.ToArray();
-
             baseAssetComboBox.ValueMember = nameof(CoinDTO.Name);
             quoteAssetCombobox.ValueMember = nameof(CoinDTO.Name);
 
+            FillCoinTypes();
+        }
+
+        private async void FillCoinTypes()
+        {
+            var stockProvider = _resolver(_type);
+
+            var coinTypes = await stockProvider.GetSymbols();
+
+            var coins = coinTypes.ToArray();
+
+            baseAssetComboBox.Items.Clear();
             baseAssetComboBox.Items.AddRange(coins);
+
+            quoteAssetCombobox.Items.Clear();
             quoteAssetCombobox.Items.AddRange(coins);
 
             baseAssetComboBox.SelectedIndex = 0;
@@ -84,6 +99,13 @@ namespace CriptoStock
         private void QuoteAssetComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             RemoveDuplicateValues((ComboBox)sender, ((ComboBox)sender).SelectedItem);
+        }
+
+        private void SelectedStock_Changed(object sender, EventArgs e)
+        {
+            _type = Enum.Parse<StockTypes>(stockCombobox.SelectedItem.ToString());
+
+            FillCoinTypes();
         }
     }
 }

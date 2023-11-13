@@ -3,9 +3,7 @@ using Bitget.Net;
 using Bybit.Net;
 using CriptoStock.Application.Services;
 using CriptoStock.Domain.Services;
-using CryptoStock.Application.Services;
 using CryptoStock.Desktop.Models.Enums;
-using CryptoStock.Domain.Services;
 using Kucoin.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -48,8 +46,6 @@ namespace CriptoStock.Desktop
                     services.AddSingleton<BinanceStockProvider>();
                     services.AddSingleton<BitgetStockProvider>();
                     services.AddSingleton<KucoinStockProvider>();
-
-                    services.AddSingleton<ICoinProvider, CoinProvider>();
 
                     services.AddTransient<StockProviderResolver>(serviceProvider => type =>
                     {

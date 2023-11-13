@@ -9,5 +9,6 @@ namespace CriptoStock.Domain.Services
 
         delegate Task CurrencyChanged(StockDTO? model);
         event CurrencyChanged CurrencyChangedEvent;
+        Task<IReadOnlyCollection<CoinDTO>> GetSymbols();
     }
 }

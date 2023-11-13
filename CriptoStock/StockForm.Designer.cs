@@ -1,4 +1,5 @@
 ﻿using CryptoStock.Desktop.Controls;
+using CryptoStock.Desktop.Models.Enums;
 
 namespace CriptoStock
 {
@@ -39,6 +40,8 @@ namespace CriptoStock
             label1 = new Label();
             coinPairBox = new GroupBox();
             channelSetButton = new Button();
+            stockCombobox = new ComboBox();
+            label2 = new Label();
             coinPairBox.SuspendLayout();
             SuspendLayout();
             // 
@@ -126,11 +129,36 @@ namespace CriptoStock
             channelSetButton.UseVisualStyleBackColor = true;
             channelSetButton.Click += ChannelSetButton_Click;
             // 
+            // stockCombobox
+            // 
+            stockCombobox.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
+            stockCombobox.FormattingEnabled = true;
+            stockCombobox.Location = new Point(1195, 308);
+            stockCombobox.Name = "stockCombobox";
+            stockCombobox.Size = new Size(151, 43);
+            stockCombobox.TabIndex = 8;
+            stockCombobox.SelectedIndexChanged += SelectedStock_Changed;
+
+            stockCombobox.DataSource = Enum.GetValues(typeof(StockTypes));
+
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point);
+            label2.Location = new Point(1070, 250);
+            label2.Name = "label2";
+            label2.Size = new Size(381, 35);
+            label2.TabIndex = 9;
+            label2.Text = "Предоставляющая пары биржа";
+            // 
             // StockForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1482, 373);
+            Controls.Add(label2);
+            Controls.Add(stockCombobox);
             Controls.Add(coinPairBox);
             Controls.Add(kucoinStockView);
             Controls.Add(bybitStockView);
@@ -142,6 +170,7 @@ namespace CriptoStock
             coinPairBox.ResumeLayout(false);
             coinPairBox.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -155,5 +184,7 @@ namespace CriptoStock
         private Label label1;
         private GroupBox coinPairBox;
         private Button channelSetButton;
+        private ComboBox stockCombobox;
+        private Label label2;
     }
 }

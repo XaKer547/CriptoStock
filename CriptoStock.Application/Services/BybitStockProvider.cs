@@ -12,21 +12,19 @@ namespace CriptoStock.Application.Services
         public event CurrencyChanged CurrencyChangedEvent;
 
 
-        private readonly IBybitSocketClient _client;
-        public BybitStockProvider(IBybitSocketClient client)
+        private readonly IBybitSocketClient _socketClient;
+        private readonly IBybitRestClient _restClient;
+        public BybitStockProvider(IBybitSocketClient client, IBybitRestClient restClient)
         {
-            _client = client;
+            _socketClient = client;
+            _restClient = restClient;
         }
 
-
-        private bool isConnected;
         public async Task ConnectToTickerChanelAsync(CoinPairDTO pair)
         {
-            await _client.UnsubscribeAsync(0);
+            await _socketClient.UnsubscribeAsync(0);
 
-            var result = await _client.V5SpotApi.SubscribeToTickerUpdatesAsync(pair.GetSymbol(), Update);
-
-            isConnected = result.Success;
+            var result = await _socketClient.V5SpotApi.SubscribeToTickerUpdatesAsync(pair.GetSymbol(), Update);
         }
 
         private void Update(DataEvent<BybitSpotTickerUpdate> @event)
@@ -35,6 +33,17 @@ namespace CriptoStock.Application.Services
             {
                 LastPrice = @event.Data.LastPrice,
             });
+        }
+
+        public async Task<IReadOnlyCollection<CoinDTO>> GetSymbols()
+        {
+            var symbols = await _restClient.SpotApiV3.ExchangeData.GetSymbolsAsync();
+
+            return symbols.Data.Select(s => new CoinDTO
+            {
+                Id = s.BaseAsset,
+                Name = s.BaseAsset,
+            }).ToArray();
         }
     }
 }

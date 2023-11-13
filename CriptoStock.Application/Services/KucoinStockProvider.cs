@@ -12,21 +12,20 @@ namespace CriptoStock.Application.Services
         public event CurrencyChanged CurrencyChangedEvent;
 
 
-        private readonly IKucoinSocketClient _client;
-        public KucoinStockProvider(IKucoinSocketClient client)
+        private readonly IKucoinSocketClient _socketClient;
+        private readonly IKucoinRestClient _restClient;
+        public KucoinStockProvider(IKucoinSocketClient client, IKucoinRestClient restClient)
         {
-            _client = client;
+            _socketClient = client;
+            _restClient = restClient;
         }
 
 
-        private bool isConnected;
         public async Task ConnectToTickerChanelAsync(CoinPairDTO pair)
         {
-            await _client.UnsubscribeAsync(0);
+            await _socketClient.UnsubscribeAsync(0);
 
-            var result = await _client.SpotApi.SubscribeToTickerUpdatesAsync(pair.GetSymbol("-"), Update);
-
-            isConnected = result.Success;
+            var result = await _socketClient.SpotApi.SubscribeToTickerUpdatesAsync(pair.GetSymbol("-"), Update);
         }
 
         private void Update(DataEvent<KucoinStreamTick> @event)
@@ -35,6 +34,17 @@ namespace CriptoStock.Application.Services
             {
                 LastPrice = (decimal)@event.Data.LastPrice,
             });
+        }
+
+        public async Task<IReadOnlyCollection<CoinDTO>> GetSymbols()
+        {
+            var symbols = await _restClient.SpotApi.ExchangeData.GetSymbolsAsync();
+
+            return symbols.Data.Select(s => new CoinDTO
+            {
+                Id = s.BaseAsset,
+                Name = s.BaseAsset,
+            }).ToArray();
         }
     }
 }
